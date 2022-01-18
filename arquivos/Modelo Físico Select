@@ -1,0 +1,122 @@
+/* ModeloFisicoSelect: */
+
+CREATE TABLE Usuario (
+    Codigo_Usuario CHAR(10) PRIMARY KEY,
+    Nome_Usuario VARCHAR,
+    Dat_Nasc_Usuario DATE,
+    CPF_Usuario CHAR(10),
+    Email_Usuario VARCHAR,
+    Senha_Usuario VARCHAR,
+    Telefone_Usuario VARCHAR
+);
+
+CREATE TABLE Endereco (
+    Rua VARCHAR,
+    Bairro VARCHAR,
+    CEP CHAR(15) PRIMARY KEY,
+    Referencia VARCHAR,
+    Cidade VARCHAR,
+    Numero INT,
+    Complemento CHAR(5),
+    UF CHAR(3),
+    fk_Usuario_Codigo_Usuario CHAR(10)
+);
+
+CREATE TABLE Associacao (
+    Nome_Associacao VARCHAR,
+    Num_Registro_Associacao CHAR(10) PRIMARY KEY,
+    Telefone_Associacao CHAR(15),
+    fk_Endereco_CEP CHAR(15)
+);
+
+CREATE TABLE Catador (
+    Nome_Catador VARCHAR,
+    Dat_Nasc_Catador DATE,
+    CPF_Catador CHAR(10),
+    Sexo_Catador CHAR(1),
+    Matricula_Catador CHAR(10) PRIMARY KEY,
+    Email_Catador VARCHAR,
+    Senha_Catador VARCHAR,
+    Login_Catador VARCHAR,
+    Telefone_Catador CHAR(15),
+    fk_Endereco_CEP CHAR(15)
+);
+
+CREATE TABLE Retirada_Solicitar (
+    Data_Hora_Retirada DATE/TIME,
+    Data_Hora_Solicitacao DATE/TIME,
+    Foto_Local PHOTO,
+    Volume_Lixo FLOAT,
+    fk_Endereco_CEP CHAR(15),
+    fk_Associacao_Num_Registro_Associacao CHAR(10),
+    fk_Usuario_Codigo_Usuario CHAR(10)
+);
+
+CREATE TABLE Veiculo (
+    Tipo CHAR(20),
+    Capacidade_Volumetrica FLOAT,
+    Identificacao CHAR(10) PRIMARY KEY,
+    fk_Associacao_Num_Registro_Associacao CHAR(10),
+    fk_Catador_Matricula_Catador CHAR(10)
+);
+
+CREATE TABLE Realiza (
+    fk_Catador_Matricula_Catador CHAR(10)
+);
+
+CREATE TABLE Usado (
+    fk_Veiculo_Identificacao CHAR(10)
+);
+ 
+ALTER TABLE Endereco ADD CONSTRAINT FK_Endereco_2
+    FOREIGN KEY (fk_Usuario_Codigo_Usuario)
+    REFERENCES Usuario (Codigo_Usuario)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE Associacao ADD CONSTRAINT FK_Associacao_2
+    FOREIGN KEY (fk_Endereco_CEP)
+    REFERENCES Endereco (CEP)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Catador ADD CONSTRAINT FK_Catador_2
+    FOREIGN KEY (fk_Endereco_CEP)
+    REFERENCES Endereco (CEP)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Catador ADD CONSTRAINT FK_Catador_3
+    FOREIGN KEY (fk_Associacao_Num_Registro_Associacao)
+    REFERENCES Associacao (Num_Registro_Associacao)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Retirada_Solicitar ADD CONSTRAINT FK_Retirada_Solicitar_1
+    FOREIGN KEY (fk_Endereco_CEP)
+    REFERENCES Endereco (CEP)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Retirada_Solicitar ADD CONSTRAINT FK_Retirada_Solicitar_2
+    FOREIGN KEY (fk_Associacao_Num_Registro_Associacao)
+    REFERENCES Associacao (Num_Registro_Associacao);
+ 
+ALTER TABLE Retirada_Solicitar ADD CONSTRAINT FK_Retirada_Solicitar_3
+    FOREIGN KEY (fk_Usuario_Codigo_Usuario)
+    REFERENCES Usuario (Codigo_Usuario);
+ 
+ALTER TABLE Veiculo ADD CONSTRAINT FK_Veiculo_2
+    FOREIGN KEY (fk_Associacao_Num_Registro_Associacao)
+    REFERENCES Associacao (Num_Registro_Associacao)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE Veiculo ADD CONSTRAINT FK_Veiculo_3
+    FOREIGN KEY (fk_Catador_Matricula_Catador)
+    REFERENCES Catador (Matricula_Catador)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE Realiza ADD CONSTRAINT FK_Realiza_1
+    FOREIGN KEY (fk_Catador_Matricula_Catador)
+    REFERENCES Catador (Matricula_Catador)
+    ON DELETE RESTRICT;
+ 
+ALTER TABLE Usado ADD CONSTRAINT FK_Usado_1
+    FOREIGN KEY (fk_Veiculo_Identificacao)
+    REFERENCES Veiculo (Identificacao)
+    ON DELETE SET NULL;
